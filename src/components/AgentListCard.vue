@@ -54,7 +54,10 @@
         Deny
       </span>
     </div>
-    <img class="logo" :src="getLogo" />
+    <div>
+      <img class="logo" :src="getLogo" />
+
+    </div>
     <div class="info">
       <div class="host">
         <i class="icon-desktop"/>
@@ -220,6 +223,8 @@ export default {
 .cardContainer {
   padding: 1rem;
   position: relative;
+  display: flex;
+  flex-direction: column;
   .machainType {
     border: 30px solid transparent;
     width: 0;
@@ -269,9 +274,14 @@ export default {
       }
     }
   }
-  .resource {
-    margin-right: 5px;
+  .resources {
+    flex-grow: 1;
+    overflow: auto;
+    .resource {
+      margin-right: 5px;
+    }
   }
+
   
 }
 // @media screen and (min-width: 1024px) {
