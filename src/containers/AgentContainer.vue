@@ -34,17 +34,19 @@
         </div>
       </div>
       <div class="right">
-        <i class="icon-th-list"/>
-        <i class="icon-th-card"/>
+        <i :class="{ 'icon-th-list': true, active: currentPosition === 'list'}" @click="switchPosition('list')"/>
+        <i :class="{ 'icon-th-card': true, active: currentPosition === 'card'}" @click="switchPosition('card')"/>
       </div>
     </div>
-    <div class="agentList" @click="handleClickList">
+    <div class="agentList" :list-type="currentPosition" @click="handleClickList">
       <AgentListCard v-for="(agent, index) in getAgentList" :key="index" 
         :agent="agent" 
         :workTypes="workTypes"
         :isAddResource="agent.id === activeAgent"
+        :cardType="currentPosition"
         @deleteResource="deleteResource"
         @addResource="addResource"
+        @denyBuiding="denyBuiding"
       />
     </div>
   </div>
@@ -95,6 +97,7 @@ export default {
       activeAgent: -1,
       activeTab: -1,
       searchText: '',
+      currentPosition: 'list'
     }
   },
   computed: {
@@ -103,10 +106,6 @@ export default {
     },
     getVirtualCount () {
       return this.agents.filter((item) => item.machainType === MACHAIN_TYPE.VIRTUAL).length
-    },
-    getCurrentAgents () {
-      // 根据判断条件返回对应的agents列表
-      return this.agents
     },
     getAgentList () {
       let agents = this.agents
@@ -148,6 +147,15 @@ export default {
       }
       
     },
+    denyBuiding (id) {
+      const agentIndex = this.agents.findIndex((agent) => agent.id === id)
+      const agent = this.agents[agentIndex]
+      agent.workType = WORK_TYPE.IDLE
+      this.agents[agentIndex] = agent
+    },
+    switchPosition (position) {
+      this.currentPosition = position
+    }
   }
 }
 </script>
@@ -266,9 +274,10 @@ export default {
   .right {
     i {
       margin-right: 1rem;
+      cursor: pointer;
     }
     .active {
-      color: blue;
+      color: #00b4cf;
     }
   }
 }
@@ -279,6 +288,14 @@ export default {
   > div {
     background-color: white;
     margin-bottom: 1rem;
+  };
+  &[list-type='card'] {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 250px; 
+    grid-column-gap: 1rem;
+    grid-row-gap: 1rem;
+    grid-auto-rows: 250px;
   }
   // background-color: white;
 }
@@ -290,13 +307,13 @@ export default {
     }
   }
 }
-@media screen and (max-width: 1024px) {
-  .tab {
-    .right {
-      display: none;
-    }
-  }
-}
+// @media screen and (max-width: 1024px) {
+//   .tab {
+//     .right {
+//       display: none;
+//     }
+//   }
+// }
 @media screen and (max-width: 768px) {
   .searchInput-sm {
     display: block;
@@ -334,6 +351,9 @@ export default {
   }
   .agentList {
     grid-column: 1 / 3;
+    &[list-type="card"] {
+      grid-template-columns: 1fr 1fr;
+    }
   }
 }
 </style>

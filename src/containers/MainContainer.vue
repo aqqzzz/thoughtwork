@@ -37,7 +37,7 @@ export default {
 
 <style lang="scss" scoped>
   .main {
-    max-width: 1200px;
+    width: 1200px;
     margin: 0 auto;
     background-color: #f3f3f3;
     flex-grow: 1;
