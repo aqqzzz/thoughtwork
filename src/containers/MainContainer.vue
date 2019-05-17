@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <Sidebar :active="active" :show="showSidebar" @change="changeActive" @close="closeSidebar"/>
+    <Sidebar :active="active" :show="showSidebar" :histories="histories" @change="changeActive" @close="closeSidebar"/>
     <AgentContainer v-if="active === 'AGENT'"/>
     <div v-else>
       
@@ -17,16 +17,46 @@ export default {
   },
   data() {
     return {
-      active: 'AGENT'
+      active: 'AGENT',
+      histories: [location.href]
     }
   },
   components: {
     Sidebar,
     AgentContainer,
   },
+  created() {
+    if (history){
+      history.pushState({}, '', 'AGENT')  
+      window.addEventListener('popstate', () => {
+        const location = unescape(window.location.pathname)
+        this.active = location.slice(1)
+      })
+    } else {
+      location.hash = '#AGENT'
+      window.addEventListener('hashchange', () => {
+        const location = unescape(window.location.hash)
+        this.active = location.slice(1)
+      })
+    }
+    
+  },
   methods: {
     changeActive (item) {
-      this.active = item
+      
+      if (history) {
+        history.pushState({}, '', `/${item}`)
+        this.active = item
+      } else {
+        location.hash = `#${item}`
+      }
+      if (this.histories.length < 5) {
+        this.histories.unshift(location.href)
+      } else {
+        this.histories.unshift(location.href)
+        this.histories.pop()
+        console.log(this.histories)
+      }
     },
     closeSidebar () {
       this.$emit('closeCallback')

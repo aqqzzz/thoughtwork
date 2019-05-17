@@ -10,7 +10,7 @@
     <div class="history">
       <div>History</div>
       <ul>
-        <li v-for="history in histories" :key="history">
+        <li v-for="(history, index) in histories" :key="index" @click="jumpTo(history)">
           {{history}}
         </li>
       </ul>
@@ -19,7 +19,7 @@
 </template>
 <script>
 export default {
-  props: ['active', 'change', 'show', 'close'],
+  props: ['active', 'change', 'show', 'close', 'histories'],
   data() {
     return {
       items: [
@@ -28,9 +28,6 @@ export default {
         {icon: 'icon-boat', text: 'MY CRUISE'},
         {icon: 'icon-cog', text: 'HELP'}
       ],
-      histories: [
-        'a','b','c'
-      ]
     }
   },
   methods: {
@@ -39,6 +36,9 @@ export default {
     },
     closeNav () {
       this.$emit('close')
+    },
+    jumpTo (history) {
+      location.href = history
     }
   }
 }
@@ -103,6 +103,11 @@ export default {
     ul {
       margin: 0;
       padding-left: 10px;
+      font-size: 1.6rem;
+      li {
+        cursor: pointer;
+        margin-bottom: 1rem;
+      }
     }
   }
   @media screen and (max-width: 1024px) {
